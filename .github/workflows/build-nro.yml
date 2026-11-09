@@ -6,8 +6,19 @@ jobs:
     container: devkitpro/devkita64
     steps:
       - uses: actions/checkout@v4
-      - name: Install Switch libraries
-        run: dkp-pacman -Syu --noconfirm switch-dev
+      - name: Install build tools
+        run: apt-get update && apt-get install -y git autoconf automake libtool pkg-config
+      - name: Build libnx
+        run: |
+          git clone --depth 1 https://github.com/switchbrew/libnx.git /tmp/libnx
+          make -C /tmp/libnx install
+      - name: Build switch-tools
+        run: |
+          git clone --depth 1 https://github.com/switchbrew/switch-tools.git /tmp/switch-tools
+          cd /tmp/switch-tools
+          ./autogen.sh
+          ./configure --prefix=$DEVKITPRO/tools
+          make install
       - run: make
       - uses: actions/upload-artifact@v4
         with:
