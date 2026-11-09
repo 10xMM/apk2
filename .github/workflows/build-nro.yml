@@ -6,6 +6,8 @@ jobs:
     container: devkitpro/devkita64
     steps:
       - uses: actions/checkout@v4
+      - name: Install Switch libraries
+        run: dkp-pacman -Syu --noconfirm switch-dev
       - run: make
       - uses: actions/upload-artifact@v4
         with:
